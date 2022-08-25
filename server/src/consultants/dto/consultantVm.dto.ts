@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsString, IsUUID } from 'class-validator';
-import { Consultant } from '../../entities/consultant.entity';
 import { StatusDTO } from '../../status/dto/status.dto';
-import { UserDTO } from '../../users/dto/user.dto';
 
 export class ConsultantVmDTO {
   @ApiProperty({ required: true })

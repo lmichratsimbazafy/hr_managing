@@ -2,10 +2,12 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpStatus,
   Inject,
   NotFoundException,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -19,6 +21,7 @@ import { UserDTO } from '../users/dto/user.dto';
 import { User } from '../users/user.decorator';
 import { ConsultantsService } from './consultants.service';
 import { ConsultantDTO } from './dto/consultants.dto';
+import { ConsultantFilterDTO } from './dto/consultantsFilter.dto';
 import { ConsultantVmDTO } from './dto/consultantVm.dto';
 import { CreateConsultantDTO } from './dto/createConsultant.dto';
 
@@ -95,5 +98,13 @@ export class ConsultantsController {
       startDate,
       status,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findConsultants(
+    @Query() filters?: ConsultantFilterDTO,
+  ): Promise<ConsultantVmDTO[]> {
+    return this.consultantService.findAll(filters);
   }
 }
