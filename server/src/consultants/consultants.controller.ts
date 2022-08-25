@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -36,6 +37,10 @@ export class ConsultantsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiResponse({
+    type: ConsultantVmDTO,
+    status: 200,
+  })
   async createConsultant(
     @User() user: UserDTO,
     @Body() p: CreateConsultantDTO,
@@ -102,6 +107,11 @@ export class ConsultantsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiResponse({
+    type: ConsultantVmDTO,
+    isArray: true,
+    status: 200,
+  })
   findConsultants(
     @Query() filters?: ConsultantFilterDTO,
   ): Promise<ConsultantVmDTO[]> {
