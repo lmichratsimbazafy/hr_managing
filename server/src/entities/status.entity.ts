@@ -7,6 +7,9 @@ export class Status extends BaseEntity {
   @Column()
   label: string;
 
+  @Column()
+  displayText: string;
+
   @OneToMany(
     () => ConsultantStatus,
     (consultantStatus) => consultantStatus.status,

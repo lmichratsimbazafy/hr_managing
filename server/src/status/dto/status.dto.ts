@@ -12,10 +12,15 @@ export class StatusDTO {
   @IsString()
   label: string;
 
+  @ApiProperty({ required: true })
+  @IsString()
+  displayText: string;
+
   static from(dto: Partial<StatusDTO>): StatusDTO {
     const it = new StatusDTO();
     it.id = dto.id;
     it.label = dto.label;
+    it.displayText = dto.displayText;
     return it;
   }
 
@@ -23,6 +28,7 @@ export class StatusDTO {
     return this.from({
       id: status.id ?? '',
       label: status.label ?? 'Autre',
+      displayText: status.displayText,
     });
   }
 
@@ -30,6 +36,7 @@ export class StatusDTO {
     const it = new Status();
     it.id = this.id;
     it.label = this.label;
+    it.displayText = this.displayText;
     it.createDateTime = new Date();
     it.lastChangedDateTime = new Date();
     it.createdBy = user.id;
