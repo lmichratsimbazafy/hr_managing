@@ -1,29 +1,30 @@
-import * as _ from 'lodash';
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { configService } from '../config/config.service';
+import * as bcrypt from 'bcrypt';
+import { DataSource } from 'typeorm';
 import { User, UserRoles } from '../entities/user.entity';
 import { UserDTO } from '../users/dto/user.dto';
 import { UsersService } from '../users/users.service';
 
-export const seedAdminUser = async (): Promise<any> => {
-  const opt = {
-    ...configService.getTypeOrmConfig(),
-    debug: true,
-  };
-
-  const dataSource = new DataSource(opt as DataSourceOptions);
-  const connection = await dataSource.initialize();
+export const seedAdminUser = async (
+  connection: DataSource,
+): Promise<UserDTO> => {
   const userService = new UsersService(connection.manager.getRepository(User));
 
   console.log('Seeding admin user ....');
   const user = await userService.findOneByEmail(process.env.ADMIN_EMAIL);
   if (user) return;
-  await userService.create(
+
+  const saltOrRounds = 10;
+  const hashedPassword = await bcrypt.hash(
+    process.env.ADMIN_PASSWORD,
+    saltOrRounds,
+  );
+  const userDTO = await userService.create(
     UserDTO.from({
       email: process.env.ADMIN_EMAIL,
-      password: process.env.ADMIN_PASSWORD,
+      password: hashedPassword,
       role: UserRoles.ADMIN,
     }),
   );
   console.log('Admin user seed successful 👌');
+  return userDTO;
 };
