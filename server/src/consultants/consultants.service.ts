@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Consultant } from '../entities/consultant.entity';
@@ -31,7 +31,7 @@ export class ConsultantsService {
       .then((e) => (e ? ConsultantDTO.fromEntity(e) : undefined));
   }
 
-  async findById(id: string): Promise<ConsultantVmDTO | undefined> {
+  async findById(id: string): Promise<ConsultantVmDTO> {
     return this.consultantRepo
       .findOne({
         where: { id },
@@ -39,26 +39,32 @@ export class ConsultantsService {
           consultantStatus: { status: true },
         },
       })
-      .then((i) =>
-        i
-          ? ConsultantVmDTO.from({
-              id: i.id,
-              emailAddress: i.emailAddress,
-              firstName: i.firstName,
-              lastName: i.lastName,
-              phone: i.phone,
-              endDate: DateFormatterHelpers.stringToDate(
-                i.consultantStatus[0]?.endDate ?? undefined,
-              ),
-              startDate: DateFormatterHelpers.stringToDate(
-                i.consultantStatus[0].startDate,
-              ),
-              status: i.consultantStatus[0]
-                ? StatusDTO.fromEntity(i.consultantStatus[0].status)
-                : undefined,
-            })
-          : undefined,
-      );
+      .then((i) => {
+        if (!i)
+          throw new NotFoundException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              error: `ENTITY_NOT_FOUND`,
+            },
+            `Cannot find consultant of id ${id} not found`,
+          );
+        return ConsultantVmDTO.from({
+          id: i.id,
+          emailAddress: i.emailAddress,
+          firstName: i.firstName,
+          lastName: i.lastName,
+          phone: i.phone,
+          endDate: DateFormatterHelpers.stringToDate(
+            i.consultantStatus[0]?.endDate ?? undefined,
+          ),
+          startDate: DateFormatterHelpers.stringToDate(
+            i.consultantStatus[0].startDate,
+          ),
+          status: i.consultantStatus[0]
+            ? StatusDTO.fromEntity(i.consultantStatus[0].status)
+            : undefined,
+        });
+      });
   }
 
   async findAll(filter?: ConsultantFilterDTO): Promise<ConsultantVmDTO[]> {

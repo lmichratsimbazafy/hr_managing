@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Status } from '../entities/status.entity';
@@ -17,19 +17,36 @@ export class StatusService {
       .then((e) => StatusDTO.fromEntity(e));
   }
 
-  async findStatusByLabe(label: string): Promise<StatusDTO | undefined> {
-    return this.statusRepo
-      .findOneBy({ label })
-      .then((e) => (e ? StatusDTO.fromEntity(e) : undefined));
+  async findStatusByLabe(label: string): Promise<StatusDTO> {
+    return this.statusRepo.findOneBy({ label }).then((e) => {
+      if (!e)
+        throw new NotFoundException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `ENTITY_NOT_FOUND`,
+          },
+          `Cannot find status of label #${label} not found`,
+        );
+      return StatusDTO.fromEntity(e);
+    });
   }
 
-  async findById(id: string): Promise<StatusDTO | undefined> {
-    return this.statusRepo
-      .findOneBy({ id })
-      .then((e) => (e ? StatusDTO.fromEntity(e) : undefined));
+  async findById(id: string): Promise<StatusDTO> {
+    return this.statusRepo.findOneBy({ id }).then((e) => {
+      if (!e)
+        throw new NotFoundException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `ENTITY_NOT_FOUND`,
+          },
+          `Cannot find status of id #${id} not found`,
+        );
+
+      return StatusDTO.fromEntity(e);
+    });
   }
 
-  findAll = (): Promise<StatusDTO[]> => {
+  findAll = async (): Promise<StatusDTO[]> => {
     return this.statusRepo
       .find()
       .then((e) => e.map((i) => StatusDTO.fromEntity(i)));
