@@ -4,5 +4,5 @@ import { IsOptional } from 'class-validator';
 export class ConsultantFilterDTO {
   @ApiProperty()
   @IsOptional()
-  statusId: string;
+  statusIds: string[];
 }
