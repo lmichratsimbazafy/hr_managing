@@ -28,4 +28,10 @@ export class StatusService {
       .findOneBy({ id })
       .then((e) => (e ? StatusDTO.fromEntity(e) : undefined));
   }
+
+  findAll = (): Promise<StatusDTO[]> => {
+    return this.statusRepo
+      .find()
+      .then((e) => e.map((i) => StatusDTO.fromEntity(i)));
+  };
 }

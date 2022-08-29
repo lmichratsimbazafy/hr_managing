@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserDTO } from '../users/dto/user.dto';
@@ -24,5 +24,16 @@ export class StatusController {
       statusDTO: StatusDTO.from(statusDTO),
       user,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('findAll')
+  @ApiResponse({
+    type: StatusDTO,
+    isArray: true,
+    status: 200,
+  })
+  findAllStatus(): Promise<StatusDTO[]> {
+    return this.statusService.findAll();
   }
 }
