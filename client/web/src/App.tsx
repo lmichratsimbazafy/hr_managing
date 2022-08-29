@@ -8,6 +8,7 @@ import store from "./services/redux-services/store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Router from "./component/navigation/Router";
+import GlobalSnackBar from "./globalSnackBar/GlobalSnackBar";
 
 axios.interceptors.request.use(async (config: AxiosRequestConfig) => {
   const token = await AuthServices.getAccessToken();
@@ -27,6 +28,7 @@ const theme = createTheme();
 function App() {
   return (
     <Provider {...{ store }}>
+      <GlobalSnackBar />
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <Router />
