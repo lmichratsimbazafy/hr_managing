@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Inject,
   NotFoundException,
+  Param,
   Post,
   Query,
   UseGuards,
@@ -48,7 +49,13 @@ export class ConsultantsController {
     this.logger.info(`search status of id ${p.statusId}`);
     const status = await this.statusService.findById(p.statusId);
     if (!status)
-      throw new NotFoundException(`status of ${p.statusId} not found`);
+      throw new NotFoundException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: `ENTITY_NOT_FOUND`,
+        },
+        `status of ${p.statusId} not found`,
+      );
 
     this.logger.info(`search consultant of email ${p.emailAddress}`);
 
@@ -116,5 +123,15 @@ export class ConsultantsController {
     @Query() filters?: ConsultantFilterDTO,
   ): Promise<ConsultantVmDTO[]> {
     return this.consultantService.findAll(filters);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  @ApiResponse({
+    type: ConsultantVmDTO,
+    status: 200,
+  })
+  findConsultantById(@Param('id') id: string): Promise<ConsultantVmDTO> {
+    return this.consultantService.findById(id);
   }
 }
