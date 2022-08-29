@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Consultant } from '../entities/consultant.entity';
 import { DateFormatterHelpers } from '../helpers/dateFormatter';
 import { StatusDTO } from '../status/dto/status.dto';
@@ -31,13 +31,43 @@ export class ConsultantsService {
       .then((e) => (e ? ConsultantDTO.fromEntity(e) : undefined));
   }
 
+  async findById(id: string): Promise<ConsultantVmDTO | undefined> {
+    return this.consultantRepo
+      .findOne({
+        where: { id },
+        relations: {
+          consultantStatus: { status: true },
+        },
+      })
+      .then((i) =>
+        i
+          ? ConsultantVmDTO.from({
+              id: i.id,
+              emailAddress: i.emailAddress,
+              firstName: i.firstName,
+              lastName: i.lastName,
+              phone: i.phone,
+              endDate: DateFormatterHelpers.stringToDate(
+                i.consultantStatus[0]?.endDate ?? undefined,
+              ),
+              startDate: DateFormatterHelpers.stringToDate(
+                i.consultantStatus[0].startDate,
+              ),
+              status: i.consultantStatus[0]
+                ? StatusDTO.fromEntity(i.consultantStatus[0].status)
+                : undefined,
+            })
+          : undefined,
+      );
+  }
+
   async findAll(filter?: ConsultantFilterDTO): Promise<ConsultantVmDTO[]> {
     return this.consultantRepo
       .find({
         where: {
           consultantStatus: {
             status: {
-              id: filter.statusId,
+              id: filter?.statusIds ? In(filter.statusIds) : undefined,
             },
           },
         },
