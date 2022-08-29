@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -22,9 +23,21 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(p.email);
 
     if (!user)
-      throw new NotFoundException({ email: p.email }, 'user not found');
+      throw new NotFoundException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: `ENTITY_NOT_FOUND`,
+        },
+        `user of email ${p.email} not found`,
+      );
     if (!(await bcrypt.compare(p.password, user.password)))
-      throw new UnauthorizedException('wrong email or password');
+      throw new UnauthorizedException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: `FORBIDDEN`,
+        },
+        'wrong email or password',
+      );
     return user;
   }
 
@@ -35,7 +48,14 @@ export class AuthService {
 
   async checkIfUserExists(email: string): Promise<void> {
     const user = await this.userService.findOneByEmail(email);
-    if (user) throw new ConflictException('User already exists');
+    if (user)
+      throw new ConflictException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: `ENTITY_ALREADY_EXISTS`,
+        },
+        'User already exists',
+      );
   }
 
   async register(userDTO: UserDTO): Promise<UserVmDTO> {
