@@ -1,6 +1,6 @@
 import { all, fork } from "redux-saga/effects";
 import { watchLogin } from "./auth";
-import { watchFindAllConsultants } from "./consultant";
+import { watchFindAllConsultants, watchFindConsultantById } from "./consultant";
 import { watchFindAllStatus } from "./status";
 
 export const rootSaga = function* root() {
@@ -8,5 +8,6 @@ export const rootSaga = function* root() {
     fork(watchLogin),
     fork(watchFindAllConsultants),
     fork(watchFindAllStatus),
+    fork(watchFindConsultantById),
   ]);
 };
