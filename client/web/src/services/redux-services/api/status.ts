@@ -1,4 +1,5 @@
 import axios, { AxiosPromise } from "axios";
 
-export const findAllStatus = (): AxiosPromise<any> =>
-  axios.get("/status/findAll");
+export class StatusAPI {
+  static findAllStatus = (): AxiosPromise<any> => axios.get("/status/findAll");
+}

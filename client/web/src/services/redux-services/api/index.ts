@@ -1,15 +1,11 @@
-import { login } from "./auth";
+import { AuthAPI } from "./auth";
 import { ConsultantAPI } from "./consultant";
-import { findAllStatus } from "./status";
+import { StatusAPI } from "./status";
 
 const SagaAPIs = {
-  auth: {
-    login,
-  },
+  auth: AuthAPI,
   consultant: ConsultantAPI,
-  status: {
-    findAllStatus,
-  },
+  status: StatusAPI,
 };
 
 export default SagaAPIs;
