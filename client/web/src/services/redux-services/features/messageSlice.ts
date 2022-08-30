@@ -1,17 +1,20 @@
+import { AlertColor } from "@mui/material";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IMessageState {
   errorMessage: string;
   toggleShowMessage: boolean;
+  type: AlertColor;
 }
 const initialMessageState: IMessageState = {
   errorMessage: "",
   toggleShowMessage: false,
+  type: "success",
 };
 
 interface IMassageParams {
   text: string;
-  type?: "success" | "error";
+  type: AlertColor;
 }
 
 const messageSlice = createSlice({
@@ -21,6 +24,7 @@ const messageSlice = createSlice({
     showMessage(state, action: PayloadAction<IMassageParams>) {
       state.errorMessage = action.payload.text;
       state.toggleShowMessage = true;
+      state.type = action.payload.type;
     },
     hideMessage(state) {
       state.toggleShowMessage = false;
