@@ -252,9 +252,7 @@ const Layout = () => {
                   element: <Navigate {...{ to: "/consultants" }} />,
                 }}
               />
-              <Route
-                {...{ path: "/consultants", element: (() => <Home />)() }}
-              />
+              <Route {...{ path: "*", element: (() => <Home />)() }} />
             </Route>
           </Routes>
         </Suspense>
