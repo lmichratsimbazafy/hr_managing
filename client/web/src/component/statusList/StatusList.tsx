@@ -17,6 +17,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import { Button } from "@mui/material";
 import { findAllConsultantsStart } from "../../services/redux-services/features/consultantSlice";
+import { useNavigate } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,6 +47,7 @@ const StatusList = () => {
   const { loading, statusList } = useSelector<RootState, IStatusState>(
     (state) => state.status
   );
+  const navigate = useNavigate();
 
   const theme = useTheme();
   const [selectedStatus, setSelectedStatus] = React.useState<IStatus[]>([]);
@@ -67,12 +69,13 @@ const StatusList = () => {
         statusIds: selectedStatus.map((s) => s.id),
       })
     );
+    navigate("/consultants");
   };
 
   return (
     <div style={{ display: "flex" }}>
       <FormControl sx={{ m: 1, display: "flex", flexDirection: "row" }}>
-        <InputLabel id="demo-multiple-chip-label">Status</InputLabel>
+        <InputLabel id="status-chip-label">Status</InputLabel>
         <Select
           labelId="status-chip"
           id="status-chip"
